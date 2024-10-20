@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Remarks</title>
+</head>
+<body>
+    {% block body %}
+    <h1>Submit Your Name and Remarks</h1>
+    <form action="/submit" method="POST">
+        Name: <input type="text" name="name" required><br>
+        Remarks: <input type="text" name="remarks" required><br>
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <a href="/view">View Submissions</a>
+    {% endblock %}
+</body>
+</html>
