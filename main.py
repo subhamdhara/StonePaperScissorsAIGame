@@ -5,6 +5,14 @@ import cvzone
 import random_choice
 import desision as d
 
+def gesture(d, h, g):
+    fingers = d.fingersUp(h)
+    if fingers == g:
+        
+        return True
+    else:
+        # print(fingers)
+        return False
 
 def game(detector, cap):
     stateResult = True
@@ -26,22 +34,24 @@ def game(detector, cap):
                 if hands:
                     state = None
                     hand = hands[0]
-                    fingers = detector.fingersUp(hand)
-                    if fingers == [0, 1, 1, 0, 0]:
+                    if gesture(detector, hands[0],  [0, 1, 1, 0, 0]):
                         state = 3
-                    elif fingers == [1, 1, 1, 1, 1]:
+                    elif gesture(detector, hands[0],  [1, 1, 1, 1, 1]):
                         state = 2
-                    elif fingers == [0, 0, 0, 0, 0]:
+                    elif gesture(detector, hands[0],  [0, 0, 0, 0, 0]):
                         state = 1
+                    # print(gesture(detector, hands[0],  [0, 1, 1, 0, 0]))
                     # print(state)
                     move, comp_img = random_choice.comp_choice(4)
                     imgBg = cvzone.overlayPNG(imgBg, comp_img, (150,200))
                     de = d.determine_winner(state, move)
                     if de != 0:
-                        if de == 1:
-                            score = [score[0], score[1]+1]
-                        if de == 2:
-                            score = [score[0]+1, score[1]]
+                        if de != 1:
+                            if de == 2:
+                                score = [score[0], score[1]+1]
+                            if de == 3:
+                                score = [score[0]+1, score[1]]
+                    # print(de)
 
         if stateResult and comp_img is not None:
             imgBg = cvzone.overlayPNG(imgBg, comp_img, (150,200))
@@ -49,14 +59,15 @@ def game(detector, cap):
         cv2.putText(imgBg, str(score[1]), (1035, 155), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 4)
 
         cv2.imshow("game", imgBg)
-        key = cv2.waitKey(1)
-        if key == ord("s"):
-            initialTime = time.time()
-            stateResult = False
+        cv2.waitKey(1)
+        if hands:
+            if gesture(detector, hands[0], [0, 1, 0, 0, 1]) and stateResult:
+                initialTime = time.time()
+                stateResult = False
 def splash(detector, cap):
     # run = True
     while True:
-        imgBg = cv2.imread("resources/splash.png")
+        imgBg = cv2.imread("resources/Splash Screen.png")
         _, img = cap.read()
         img = cv2.flip(img, 180)
         hands, img = detector.findHands(img, flipType=False, draw=True)
