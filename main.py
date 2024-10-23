@@ -5,37 +5,42 @@ import cvzone
 import choice
 import desision as d
 
-def gesture(d, h, g):
-    fingers = d.fingersUp(h)
-    if fingers == g:
-        return True
-    else:
-        return False
-    
-def gesture_horizontal(myLmList, myHandType, gesture):
+def gesture_horizontal(hand, gesture):
     tipIds = [4, 8, 12, 16, 20]
     fingers = []
-    if myLmList[tipIds[0]][1] < myLmList[tipIds[0] - 2][1]:
-        fingers.append(1)
-    else:
-        fingers.append(0)
-    if myHandType == "Right":
-        for id in range(1, 5):
-            if myLmList[tipIds[id]][0] < myLmList[tipIds[id] - 2][0]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
-    else:
-        for id in range(1, 5):
-            if myLmList[tipIds[id]][0] > myLmList[tipIds[id] - 2][0]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
-    print(fingers)
+    myLmList = hand["lmList"]
+    myHandType = hand["type"]
+    if myLmList[0][0] - myLmList[9][0] > (myLmList[0][1] - myLmList[9][1])-30:
+        if myLmList[tipIds[0]][1] < myLmList[tipIds[0] - 2][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+        if myHandType == "Right":
+            for id in range(1, 5):
+                if myLmList[tipIds[id]][0] < myLmList[tipIds[id] - 2][0]:
+                    fingers.append(1)
+                else:
+                    fingers.append(0)
+        else:
+            for id in range(1, 5):
+                if myLmList[tipIds[id]][0] > myLmList[tipIds[id] - 2][0]:
+                    fingers.append(1)
+                else:
+                    fingers.append(0)
+    # print(fingers)
     if fingers == gesture:
         return True
     else:
         return False
+
+
+def gesture(d, h, g):
+    fingers = d.fingersUp(h)
+    if fingers == g or gesture_horizontal(h,  g):
+        return True
+    else:
+        return False
+    
 
 def game(detector, cap):
     # state = None
@@ -64,9 +69,7 @@ def game(detector, cap):
                         state = 2
                     elif gesture(detector, hands[0],  [0, 0, 0, 0, 0]):
                         state = 1
-                    # print(gesture(detector, hands[0],  [0, 1, 1, 0, 0]))
-                    # print(state)
-                    move, comp_img, len = choice.hard_comp_choice(4)
+                    move, comp_img = choice.hard_comp_choice(4)
                     imgBg = cvzone.overlayPNG(imgBg, comp_img, (150,200))
                     de = d.determine_winner(state, move)
                     if de != 0:
@@ -76,18 +79,13 @@ def game(detector, cap):
                                 score = [score[0], score[1]+1]
                             if de == 3:
                                 score = [score[0]+1, score[1]]
-                    print(move, de, state, len)
-
-                    # print(de)
 
         if stateResult and comp_img is not None:
             imgBg = cvzone.overlayPNG(imgBg, comp_img, (150,200))
-            # if hands:
-            #     hand = hands[0]
-            #     myLmList = hand["lmList"]
-            #     myHandType = hand["type"]
-            #     if gesture_horizontal(myLmList, myHandType, [1, 0, 0, 0, 0]):
-            #         break
+            if hands:
+                hand = hands[0]
+                if gesture_horizontal(hand, [1, 0, 0, 0, 0]):
+                    break
 
         cv2.putText(imgBg, str(score[0]), (440, 155), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 4)
         cv2.putText(imgBg, str(score[1]), (1035, 155), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 4)
@@ -96,26 +94,18 @@ def game(detector, cap):
         cv2.waitKey(1)
         if hands:
             hand = hands[0]
-            myLmList = hand["lmList"]
-            myHandType = hand["type"]
             if gesture(detector, hands[0], [0, 1, 0, 0, 1]) and stateResult:
                 initialTime = time.time()
                 stateResult = False
-            # myHandType = hand["type"]
-            
-            # if 
 def splash(detector, cap):
-    # run = True
     while True:
-        imgBg = cv2.imread("resources/Splash Screen.png")
+        imgBg = cv2.imread("resources/splash.png")
         _, img = cap.read()
         img = cv2.flip(img, 180)
         hands, img = detector.findHands(img, flipType=False, draw=True)
         if hands:
             hand = hands[0]
-            myLmList = hand["lmList"]
-            myHandType = hand["type"]
-            if gesture_horizontal(myLmList, myHandType, [1, 0, 0, 0, 0]):
+            if gesture_horizontal(hand, [1, 0, 0, 0, 0]):
                 break
         cv2.imshow("game", imgBg)
         cv2.waitKey(1)

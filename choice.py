@@ -15,7 +15,7 @@ def hard_comp_choice(scale):
     comp_choice = int(bot.play())
     img = cv2.imread(f"resources/{str(comp_choice)}.png", cv2.IMREAD_UNCHANGED)
     img = cv2.resize(img, (scale*100, scale*100))
-    return comp_choice, img, len(bot.history)
+    return comp_choice, img
 
 def update_plan(move):
     bot.update(str(move))
