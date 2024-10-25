@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 
 # Store submissions locally in a file (text or CSV) or in memory
-submissions = []
 
 @app.route('/')
 def index():
@@ -26,6 +25,7 @@ def submit():
 
 @app.route('/view')
 def view():
+    submissions = []
     file1 = open("remarks/submissions.txt","r")
     r = file1.readlines()
     for i in r:

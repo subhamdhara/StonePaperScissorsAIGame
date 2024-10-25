@@ -4,6 +4,8 @@ from cvzone.HandTrackingModule import HandDetector
 import cvzone
 import choice
 import desision as d
+import webbrowser  
+url= 'http://127.0.0.1:5000/'  
 
 def gesture_horizontal(hand, gesture):
     tipIds = [4, 8, 12, 16, 20]
@@ -116,3 +118,5 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)
 if __name__ == "__main__":
     splash(detector, cap)
     game(detector, cap)
+    webbrowser.open_new_tab(url)  
+
