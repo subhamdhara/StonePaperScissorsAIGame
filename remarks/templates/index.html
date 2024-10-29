@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Submit Remarks</title>
 </head>
 <body>
     {% block body %}
-    <h1>Submit Your Name and Remarks</h1>
-    <form action="/submit" method="POST">
-        Name: <input type="text" name="name" required><br>
-        Remarks: <input type="text" name="remarks" required><br>
-        <button type="submit">Submit</button>
-    </form>
-    <br>
-    <a href="/view">View Submissions</a>
+    <div class="container">
+        <h2>Please give us a remark</h2>
+        <h1>Remarks</h1>
+        
+        <form action="/submit" method="POST" id="join-us">
+          <div class="fields">
+            <span>
+             <input placeholder="Name" type="text"  name="name" required/>
+          </span>
+          <br />
+           <span>
+             <input placeholder="Remarks" type="text" name="remarks" required/>
+          </span>
+          </div>
+          <div class="submit">
+            <input class="submit" value="Submit" type="submit" />
+          </div>
+        </form>
+      </div>
     {% endblock %}
 </body>
 </html>
