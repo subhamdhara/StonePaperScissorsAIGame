@@ -52,6 +52,8 @@ def game(detector, cap):
     score = [0, 0]
     while True:
         imgBg = cv2.imread("resources/Rock Paper Scissors.png")
+        sign = cv2.imread("resources/sign.png", cv2.IMREAD_UNCHANGED)
+        sign2 = cv2.imread("resources/sign2.png", cv2.IMREAD_UNCHANGED)
         _, img = cap.read()
         img = cv2.flip(img, 180)
         hands, img = detector.findHands(img, flipType=False, draw=True)
@@ -60,6 +62,7 @@ def game(detector, cap):
         if stateResult is False:
             timer = int(time.time() - initialTime)
             cv2.putText(imgBg, str(timer), (615, 405), cv2.FONT_HERSHEY_PLAIN, 6, (255, 0, 255), 4)
+            imgBg = cvzone.overlayPNG(imgBg, sign2, (0,0))
             if timer > 3:
                 stateResult = True 
                 if hands:
@@ -88,6 +91,8 @@ def game(detector, cap):
                 hand = hands[0]
                 if gesture_horizontal(hand, [1, 0, 0, 0, 0]):
                     break
+        if stateResult:
+            imgBg = cvzone.overlayPNG(imgBg, sign)
 
         cv2.putText(imgBg, str(score[0]), (440, 155), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 4)
         cv2.putText(imgBg, str(score[1]), (1035, 155), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 4)
@@ -99,6 +104,7 @@ def game(detector, cap):
             if gesture(detector, hands[0], [0, 1, 0, 0, 1]) and stateResult:
                 initialTime = time.time()
                 stateResult = False
+
 def splash(detector, cap):
     while True:
         imgBg = cv2.imread("resources/splash.png")
@@ -112,11 +118,17 @@ def splash(detector, cap):
         cv2.imshow("game", imgBg)
         cv2.waitKey(1)
 
+def instructions():
+    imgBg = cv2.imread("resources/instructions.png")
+    cv2.imshow("game", imgBg)
+    cv2.waitKey(1)
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=1)
 
 if __name__ == "__main__":
     splash(detector, cap)
+    instructions()
+    time.sleep(5)
     game(detector, cap)
     webbrowser.open_new_tab(url)  
 
